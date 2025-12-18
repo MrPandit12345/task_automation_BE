@@ -1,17 +1,17 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
 
-  const exist = await User.findOne({ email });
-  if (exist)
-    return res.status(400).json({ message: "User is already existed" });
+  const exists = await User.findOne({ email });
+  if (exists) return res.status(400).json({ message: "User already exists" });
 
-  const passHash = await bcrypt.hash(password, 10);
-  await User.create({ name, email, password: passHash });
+  const hashed = await bcrypt.hash(password, 10);
+  await User.create({ name, email, password: hashed });
 
-  res.status(201).json({ message: "User registered successfully" });
+  res.status(201).json({ message: "User registered" });
 };
 
 export const login = async (req, res) => {
